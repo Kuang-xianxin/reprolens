@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>ReproLens · 问题报告</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/static/workbench.css" />
+    <script type="module" src="/static/workbench.js"></script>
+  </head>
+  <body>
+    <a href="#main" class="skip" id="skip">跳到报告</a>
+    <header class="topbar">
+      <a href="#new" class="brand" aria-label="ReproLens"
+        ><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="currentColor" />
+          <path
+            d="M10 23V9h7a4 4 0 0 1 0 8h-7m7 0 5 6"
+            fill="none"
+            stroke="white"
+            stroke-width="2.3"
+          /></svg
+        ><span>ReproLens</span></a
+      ><span class="local-label" id="local-label"></span>
+      <div class="header-actions">
+        <button id="toggle-list" class="mobile-only"></button
+        ><button id="language" class="quiet"></button>
+      </div>
+    </header>
+    <div class="shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-heading">
+          <h2 id="inbox-heading"></h2>
+          <button id="new-case" class="primary"></button>
+        </div>
+        <label for="search" class="sr-only" id="search-label"></label
+        ><input type="search" id="search" autocomplete="off" /><label
+          for="filter"
+          class="sr-only"
+          id="filter-label"
+        ></label
+        ><select id="filter"></select>
+        <nav id="case-list" aria-labelledby="inbox-heading"></nav>
+        <button id="more" class="quiet" hidden></button>
+        <div class="sidebar-foot" id="sidebar-foot"></div>
+      </aside>
+      <main id="main" tabindex="-1">
+        <div id="notice" role="status" aria-live="polite" hidden></div>
+        <div id="content"></div>
+      </main>
+    </div>
+  </body>
+</html>

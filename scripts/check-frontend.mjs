@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {createTaskPoller} from '../reprolens/static/task-poller.js';
+const pending=new Map();const applied=[];const errors=[];
+const tick=()=>new Promise(r=>setTimeout(r,10));
+const poller=createTaskPoller({read:(id)=>new Promise(r=>pending.set(id,r)),onState:j=>applied.push(j.case_id),onDone:async(j,current)=>{await tick();if(current())applied.push(j.id);},onError:e=>errors.push(e),interval:5});
+poller.start('old','a');poller.start('new','b');
+pending.get('old')({case_id:'old',id:'a',status:'ready'});
+pending.get('new')({case_id:'new',id:'b',status:'ready'});
+await tick();await tick();assert.deepEqual(applied,['new','b']);
+poller.start('during','c');pending.get('during')({case_id:'during',id:'c',status:'ready'});await Promise.resolve();poller.stop();await tick();
+assert(!applied.includes('c'));assert.deepEqual(errors,[]);
+console.log('PASS late route response, late completion after stop, single visible poll lifecycle');

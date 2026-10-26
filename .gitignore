@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/
+runtime/
+.env
+.env.*
+!.env.example
+/devpost/learner-profile.md
+/docs/FINAL_FORM_EN_20261023.md
+/DELIVERY.json
+/DELIVERY.md
+
+.venv-hardening/

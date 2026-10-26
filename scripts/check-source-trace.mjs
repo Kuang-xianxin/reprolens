@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {sourceIndex, traceText} from '../reprolens/static/source-trace.js';
+const fixture = JSON.parse(fs.readFileSync(new URL('../examples/source-trace.json',import.meta.url),'utf8'));
+assert.deepEqual(traceText(fixture.text,sourceIndex(fixture.sources)),fixture.expected);
+const index = sourceIndex([{text:'x\n'.repeat(6000)}]);
+const trace = traceText('x\n'.repeat(6000),index);
+assert.equal(trace.matched,6000);
+assert.equal(trace.omitted,5920);
+assert.equal(index.get('x').matches.length,3);
+assert.equal(traceText('Export did not fail',sourceIndex(fixture.sources)).matched,0);
+console.log('PASS shared Python/JS trace contract, edited wording, duplicate-source bounds, 6000-line input');

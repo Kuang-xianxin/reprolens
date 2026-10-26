@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Turn deliberately supplied error evidence into a reviewable bug report.">
+  <title>ReproLens · Evidence before assumptions</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/" aria-label="ReproLens home"><span class="brandmark">R</span>ReproLens<span class="edition">LOCAL WORKBENCH</span></a><div class="top-actions"><span class="local-dot" data-i18n="local">Your evidence, on your machine</span><button id="language" class="subtle" type="button">中文</button></div></header>
+  <div class="layout">
+    <aside class="sidebar"><div class="side-heading"><h2 data-i18n="cases">Case notebook</h2><span id="case-count" class="count">0</span></div><button id="new-case" class="primary wide" data-i18n="newCase">+ New case</button><nav id="case-list" aria-label="Saved cases"></nav><div class="side-note"><span class="eyebrow" data-i18n="principle">THE WORKING RULE</span><p data-i18n="principleText">Keep what you observed separate from what you suspect.</p><p class="muted" data-i18n="noExecute">Your code is evidence. ReproLens never runs it.</p></div></aside>
+    <main>
+      <div id="message" class="message hidden" role="status" aria-live="polite"></div>
+      <section id="create-view">
+        <div class="intro"><span class="eyebrow" data-i18n="eyebrow">FROM ERROR TO EVIDENCE</span><h1 data-i18n="headline">A better bug report<br>starts with what happened.</h1><p data-i18n="intro">Bring the error, a small log, and the relevant code. Trace each observation to its source, fill the gaps, then decide what to share.</p></div>
+        <div class="stepbar"><span class="active" data-i18n="step1">01 Capture</span><span data-i18n="step2">02 Extract</span><span data-i18n="step3">03 Review</span><span data-i18n="step4">04 Export</span></div>
+        <form id="create-form" class="panel">
+          <div class="section-heading"><h2 data-i18n="capture">Capture one reproducible problem</h2><button type="button" id="sample" class="text-button" data-i18n="sample">Try synthetic example ↗</button></div>
+          <label for="case-title" data-i18n="title">Case title</label><input id="case-title" required maxlength="160" placeholder="e.g. Empty cart crashes the summary">
+          <label for="description" data-i18n="description">What happened?</label><textarea id="description" rows="5" required maxlength="6000" placeholder="What did you do? What did you expect? What actually happened?"></textarea>
+          <div class="input-grid"><div><label for="snippet" data-i18n="snippet">Relevant log or code (optional)</label><textarea id="snippet" rows="6" spellcheck="false" placeholder="Paste only the part you want to include."></textarea></div><div class="file-box"><label for="files" data-i18n="files">Attach UTF-8 text files (optional)</label><input id="files" type="file" multiple accept=".txt,.log,.py,.js,.ts,.json,.md,.csv,.yaml,.yml"><p data-i18n="fileHint">Only files you choose are read. Up to 6 sources, 12,000 characters / 24,000 UTF-8 bytes per case.</p><ul id="file-list"></ul></div></div>
+          <div class="form-footer"><p class="muted" data-i18n="privacy">Review secrets and personal data before adding evidence. Model analysis sends these sources only to your configured endpoint.</p><button class="primary" type="submit" data-i18n="save">Create case →</button></div>
+        </form>
+      </section>
+      <section id="case-view" class="hidden">
+        <div class="case-heading"><div><span id="case-meta" class="eyebrow"></span><h1 id="current-title"></h1></div><span id="case-state" class="badge"></span></div>
+        <div class="stepbar"><span class="active" data-i18n="step1">01 Capture</span><span id="extract-step" data-i18n="step2">02 Extract</span><span id="review-step" data-i18n="step3">03 Review</span><span id="export-step" data-i18n="step4">04 Export</span></div>
+        <div class="workspace">
+          <section class="panel source-panel"><div class="section-heading"><h2 data-i18n="sourceTitle">Original evidence</h2><span id="source-count" class="count"></span></div><p class="muted" data-i18n="sourceHint">Immutable source text. Line numbers are assigned here, not by the model.</p><div id="sources"></div>
+            <details id="answer-details" class="answer-box"><summary data-i18n="addEvidence">Add an answer or more evidence</summary><form id="answer-form"><label for="answer" data-i18n="answerLabel">New information (stored as a source)</label><textarea id="answer" rows="4" required></textarea><p class="muted" data-i18n="invalidate">Adding evidence clears the previous analysis and review. Extract again to include it.</p><button class="secondary" type="submit" data-i18n="saveAnswer">Save new evidence</button></form></details>
+          </section>
+          <section class="analysis-panel"><div class="panel analysis-controls"><div class="section-heading"><h2 data-i18n="extractTitle">Build the report, with receipts</h2><span id="model-state" class="badge neutral"></span></div><p class="muted" data-i18n="extractHint">AI selects and classifies source lines and proposes questions. Compare the categories and questions with your evidence before review.</p><div class="button-row"><button id="analyze-ai" class="primary" data-i18n="aiExtract">Extract with AI</button><button id="analyze-rules" class="secondary" data-i18n="rulesExtract">Use rules only</button></div><p id="run-state" class="run-state" aria-live="polite"></p></div>
+            <div id="analysis-results"></div>
+            <section id="review-panel" class="panel hidden"><h2 data-i18n="humanReview">Your review is the final step</h2><p class="muted" data-i18n="reviewHint">Decide on every claim above. Accepting a hypothesis includes it as unconfirmed, not as a proved cause.</p><div class="checklist"><label><input type="checkbox" id="check-sources"><span data-i18n="checkSources">I compared the claims with the original evidence.</span></label><label><input type="checkbox" id="check-hypotheses"><span data-i18n="checkHypotheses">I kept guesses separate from observations.</span></label><label><input type="checkbox" id="check-privacy"><span data-i18n="checkPrivacy">I reviewed all sources for secrets and private data.</span></label></div><div class="button-row"><button id="confirm" class="primary" data-i18n="confirm">Confirm report</button><a id="download" class="button secondary hidden" data-i18n="download">Download editable .md ↓</a></div><p class="muted" data-i18n="exportHint">The export includes all original sources, accepted claims and unresolved questions. Review it again before sharing.</p></section>
+          </section>
+        </div>
+      </section>
+      <footer><span>ReproLens · 0.1</span><span data-i18n="footer">A source match is a starting point. It is not proof of a root cause.</span></footer>
+    </main>
+  </div>
+</body>
+</html>
+
